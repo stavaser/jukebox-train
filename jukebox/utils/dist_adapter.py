@@ -71,6 +71,13 @@ def _get_world_size():
     return dist.get_world_size()
 
 def _all_gather(tensor_list, tensor):
+    if tensor.device.type != 'cuda':
+        tensor = tensor.to('cuda')
+
+    for i in range(len(tensor_list)):
+        if tensor_list[i].device.type != 'cuda':
+                tensor_list[i] = tensor_list[i].to('cuda')
+
     return dist.all_gather(tensor_list, tensor)
 
 def _all_reduce(tensor, op):
